@@ -1,0 +1,8 @@
+<!doctype html>
+<title>Reports</title>
+<h1>Select User</h1>
+<ul>
+  {% for u in users %}
+  <li><a href="{{ url_for('report', user_id=u[0]) }}">{{ u[1] }}</a></li>
+  {% endfor %}
+</ul>
