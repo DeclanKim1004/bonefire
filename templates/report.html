@@ -1,9 +1,43 @@
-<!doctype html>
-<title>Report</title>
-<h1>Report for {{ username }}</h1>
-<p>Total minutes: {{ total_minutes }}</p>
-<p>Total entries: {{ entry_count }}</p>
-<p>Average minutes per entry: {{ avg_minutes }}</p>
-<p>Most active day: {{ top_day }} ({{ top_day_minutes }} min)</p>
-<p>Most active hour: {{ top_hour_range }} ({{ hour_minutes }} min)</p>
-<p>Average entries per day: {{ avg_entries }}</p>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ username }} – 활동 리포트</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
+    h2 { color: #333; }
+    ul { line-height: 1.8; }
+    .label { font-weight: bold; }
+    .periods { margin-bottom: 1em; }
+    .periods a {
+      margin-right: 1em;
+      text-decoration: none;
+      color: #0066cc;
+      font-weight: bold;
+    }
+    .periods a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>{{ username }} – 활동 리포트 (최근 {{ days if days != 0 else '전체' }}일)</h2>
+
+  <div class="periods">
+    📆 기간 선택:
+    <a href="/report/{{ user_id }}/7">7일</a>
+    <a href="/report/{{ user_id }}/30">30일</a>
+    <a href="/report/{{ user_id }}/0">전체</a>
+  </div>
+
+  <ul>
+    <li><span class="label">총 상주 시간:</span> → {{ total_minutes // 60 }}시간 {{ total_minutes % 60 }}분</li>
+    <li><span class="label">총 입장 횟수:</span> → {{ entry_count }}회 (하루 평균 {{ '%.1f' % avg_entries }}회)</li>
+    <li><span class="label">평균 1회당 머무는 시간:</span> → 약 {{ avg_minutes }}분</li>
+    <li><span class="label">가장 자주 활동한 요일:</span> → {{ top_day }} ({{ top_day_minutes }}분)</li>
+    <li><span class="label">주요 활동 시간대:</span> → {{ top_hour_range }}</li>
+  </ul>
+
+  <a href="/report">← 유저 목록으로 돌아가기</a>
+</body>
+</html>

@@ -1,8 +1,24 @@
-<!doctype html>
-<title>Reports</title>
-<h1>Select User</h1>
-<ul>
-  {% for u in users %}
-  <li><a href="{{ url_for('report', user_id=u[0]) }}">{{ u[1] }}</a></li>
-  {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유저별 활동 리포트</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f7f7f7; }
+    h2 { margin-bottom: 1em; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 0.5em 0; }
+    a { text-decoration: none; color: #0077cc; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h2>📋 유저별 활동 리포트</h2>
+  <ul>
+    {% for user in users %}
+      <li><a href="/report/{{ user[0] }}/7">{{ user[1] }} (ID: {{ user[0] }})</a></li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('home') }}">홈으로 돌아가기</a>
+</body>
+</html>

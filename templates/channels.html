@@ -1,12 +1,42 @@
-<!doctype html>
-<title>Channels</title>
-<h1>Tracked Channels</h1>
-<form method="post" action="{{ url_for('add_channel') }}">
-  <input name="name">
-  <button>Add</button>
-</form>
-<ul>
-  {% for c in channels %}
-  <li>{{ c[1] }} <a href="{{ url_for('delete_channel', channel_id=c[0]) }}">disable</a></li>
-  {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>채널 관리</title>
+</head>
+<body>
+  <h1>🎙️ 추적 채널 목록</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>[{{ category }}]</strong> {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form action="/channels/add" method="POST">
+    <input type="text" name="name" placeholder="채널 이름" required>
+    <button type="submit">추가</button>
+  </form>
+
+  <table border="1">
+    <thead>
+      <tr><th>ID</th><th>채널 이름</th><th>삭제</th></tr>
+    </thead>
+    <tbody>
+      {% for channel in channels %}
+      <tr>
+        <td>{{ channel[0] }}</td>
+        <td>{{ channel[1] }}</td>
+        <td><a href="/channels/delete/{{ channel[0] }}">삭제</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="/users">유저 관리로 이동</a>
+</body>
+</html>

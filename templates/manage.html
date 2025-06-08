@@ -1,27 +1,149 @@
-<!doctype html>
-<title>Manage</title>
-<h1>Manage</h1>
-<h2>Add User</h2>
-<form method="post" action="{{ url_for('manage_add') }}">
-  <input type="hidden" name="target" value="user">
-  <input name="username">
-  <button type="submit">Add</button>
-</form>
-<h2>Add Channel</h2>
-<form method="post" action="{{ url_for('manage_add') }}">
-  <input type="hidden" name="target" value="channel">
-  <input name="name">
-  <button type="submit">Add</button>
-</form>
-<h2>Users</h2>
-<ul>
-  {% for u in users %}
-  <li>{{ u[1] }} <a href="{{ url_for('manage_delete_user', user_id=u[0]) }}">delete</a></li>
-  {% endfor %}
-</ul>
-<h2>Channels</h2>
-<ul>
-  {% for c in channels %}
-  <li>{{ c[1] }} <a href="{{ url_for('manage_delete_channel', channel_id=c[0]) }}">disable</a></li>
-  {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유저 & 채널 관리</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      margin-top: 2rem;
+    }
+    .manage-wrapper {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .manage-block {
+      flex: 1;
+      min-width: 400px;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    form {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 6px 12px;
+      background-color: #5c6bc0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-btn {
+      background-color: #e53935;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛠 유저 및 채널 관리</h1>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li style="color: {% if category == 'success' %}green{% else %}red{% endif %};">
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <div class="manage-wrapper">
+
+    <!-- 유저 관리 -->
+    <div class="manage-block">
+      <h2>👤 유저 관리</h2>
+      <form action="{{ url_for('manage_add') }}" method="post">
+        <input type="hidden" name="target" value="user">
+        <input type="text" name="username" placeholder="디스코드 유저명" required>
+        <button type="submit">추가</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>유저ID</th>
+            <th>유저명</th>
+            <th>닉네임</th>
+            <th>역할</th>
+            <th>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user[0] }}</td>
+            <td>{{ user[1] }}</td>
+            <td>{{ user[2] }}</td>
+            <td>{{ user[3] }}</td>
+            <td><a href="{{ url_for('manage_delete_user', user_id=user[0]) }}">삭제</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 채널 관리 -->
+    <div class="manage-block">
+      <h2>📢 채널 관리</h2>
+      <form action="{{ url_for('manage_add') }}" method="post">
+        <input type="hidden" name="target" value="channel">
+        <input type="text" name="name" placeholder="디스코드 채널명" required>
+        <button type="submit">추가</button>
+      </form>
+      <h3>등록된 채널 목록</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>채널ID</th>
+            <th>채널명</th>
+            <th>비활성화</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for channel in channels %}
+          <tr>
+            <td>{{ channel[0] }}</td>
+            <td>{{ channel[1] }}</td>
+            <td><a href="{{ url_for('manage_delete_channel', channel_id=channel[0]) }}">삭제</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</body>
+</html>
+<a href="{{ url_for('home') }}">홈으로 돌아가기</a>

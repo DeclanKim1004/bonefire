@@ -1,12 +1,151 @@
-<!doctype html>
-<title>Summary</title>
-<h1>Summary</h1>
-<ul>
-  {% for user in summary %}
-  <li>{{ user.username }} - {{ user.total_minutes }} min ({{ user.entry_count }} entries)</li>
-  {% endfor %}
-</ul>
-<h2>Overall</h2>
-<p>Total users: {{ overall.total_users }}</p>
-<p>Total minutes: {{ overall.total_all_minutes }}</p>
-<p>Average minutes per user: {{ overall.avg_minutes_per_user }}</p>
+<style>
+  .summary-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .left-panel {
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .right-panel {
+    flex: 2;
+    min-width: 400px;
+  }
+
+  .summary-block,
+  .pareto-block {
+    background-color: #fff;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .summary-block ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .summary-block li {
+    margin-bottom: 0.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background-color: white;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+  }
+
+  .full-width-section {
+    margin-top: 2rem;
+  }
+</style>
+
+<!-- 🔹 상단 요약 -->
+<div class="summary-grid">
+  <!-- 🔸 왼쪽: 전체 유저 통계 + 파레토 -->
+  <div class="left-panel">
+    <div class="summary-block">
+      <h3>📊 전체 유저 통계</h3>
+      <ul>
+        <li>현 하스타티 수: {{ overall.total_users }}</li>
+        <li>총 누적 접속 시간: {{ overall.total_all_minutes }}분</li>
+        <li>유저당 평균 접속 시간: {{ overall.avg_minutes_per_user }}분</li>
+        <li>가장 활발한 유저: <strong>{{ overall.max_user.username }}</strong> ({{ overall.max_user.total_minutes }}분)</li>
+        <li>접속 시간 편차 (표준편차): {{ overall.std_dev }}분</li>
+      </ul>
+    </div>
+
+    <div class="pareto-block">
+      <div id="pareto-container">
+        <p>불균형 데이터를 불러오는 중...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔸 오른쪽: 전체 유저 활동 요약 -->
+  <div class="right-panel">
+    <h3>🧑‍💻 전체 유저 활동 요약</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>유저명</th>
+          <th>총 시간</th>
+          <th>접속 횟수</th>
+          <th>평균 시간</th>
+          <th>활동 일수</th>
+          <th>일별 평균</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in summary %}
+        <tr>
+          <td><a href="{{ url_for('report', user_id=user.user_id) }}">{{ user.username }}</a></td>
+          <td>{{ user.total_minutes }}</td>
+          <td>{{ user.entry_count }}</td>
+          <td>{{ user.avg_minutes }}</td>
+          <td>{{ user.active_days }}</td>
+          <td>{{ user.avg_entries }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 🔹 하단 분석 -->
+<div class="full-width-section" id="heatmap-container">
+  <h3>최근 7일간 하스타티 활동 히트맵</h3>
+  <p>히트맵을 불러오는 중...</p>
+</div>
+
+<div class="full-width-section" id="focus-container">
+  <h3>🟣 활동 집중도 분석</h3>
+  <p>활동 집중도 분석을 불러오는 중...</p>
+</div>
+
+<!-- 🔸 히트맵, 집중도, 파레토 불러오기 -->
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    fetch("/report/pareto")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("pareto-container").innerHTML = html;
+      });
+
+    fetch("/report/heatmap")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("heatmap-container").innerHTML = html;
+      });
+
+    fetch("/report/focus?period=7")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("focus-container").innerHTML = html;
+      });
+  });
+</script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='pareto.css') }}">
+<a href="{{ url_for('home') }}">홈으로 돌아가기</a>
