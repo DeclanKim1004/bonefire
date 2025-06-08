@@ -8,3 +8,13 @@ This repository contains a Discord bot and accompanying web utilities inspired b
 - **bonfire_flask.py** – Flask based web dashboard for managing tracked embers/pyres and viewing flame reports.
 - **bonfire_web.py** – Small FastAPI server placeholder.
 - **bonfire_tunnel.py** – Starts an ngrok tunnel, writes the public URL to `ngrok_url.txt` and automatically renews the tunnel every few hours.
+
+## Installation
+
+Clone the repository and install the Python dependencies:
+
+```bash
+git clone https://github.com/Phxntxm/Bonfire.git
+cd Bonfire
+python3 -m pip install --upgrade -r requirements.txt
+```
