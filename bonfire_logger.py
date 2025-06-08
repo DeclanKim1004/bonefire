@@ -29,6 +29,7 @@ with open("/home/declan/src/config.json", "r", encoding="utf-8") as f:
 DISCORD_TOKEN = config["token"]
 DB_CONFIG = config.get("database")
 GUILD_ID = config.get("guild_id")
+DM_TARGET_ID = 358637116290367491
 
 # ---------- Connection Pool ----------
 class SimpleConnectionPool:
@@ -248,6 +249,25 @@ class TrackingBot(discord.Client):
                 "channel_name": after.channel.name,
             }
             logger.info(f"[입장] {username} → {after.channel.name} @ {now}")
+
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        if before.nick != after.nick:
+            before_nick = before.nick if before.nick is not None else before.name
+            after_nick = after.nick if after.nick is not None else after.name
+            msg = f"[닉변] {before_nick} → {after_nick} ({after.id})"
+            logger.info(msg)
+            target_user = self.get_user(DM_TARGET_ID)
+            if target_user is None:
+                try:
+                    target_user = await self.fetch_user(DM_TARGET_ID)
+                except Exception as e:
+                    logger.error(f"DM 대상 유저 조회 실패: {e}")
+                    target_user = None
+            if target_user:
+                try:
+                    await target_user.send(msg)
+                except Exception as e:
+                    logger.error(f"닉변 DM 전송 실패: {e}")
 
 # ---------- Run ----------
 def run_api():
