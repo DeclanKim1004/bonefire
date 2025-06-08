@@ -1,13 +1,111 @@
-<!doctype html>
-<title>Bonfire</title>
-<h1>Bonfire Dashboard</h1>
-<ul>
-  <li><a href="{{ url_for('manage_page') }}">Manage</a></li>
-  <li><a href="{{ url_for('list_users') }}">Users</a></li>
-  <li><a href="{{ url_for('list_channels') }}">Channels</a></li>
-  <li><a href="{{ url_for('report_user_list') }}">Reports</a></li>
-  <li><a href="{{ url_for('report_summary') }}">Summary</a></li>
-  <li><a href="{{ url_for('hastati_heatmap') }}">Heatmap</a></li>
-  <li><a href="{{ url_for('report_focus_view') }}">Focus</a></li>
-  <li><a href="{{ url_for('report_pareto_view') }}">Pareto</a></li>
-</ul>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Hastati 대시보드</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+      background-color: #f5f7fa;
+      line-height: 1.6;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+      color: #3f51b5;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin: 0.4rem 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0077cc;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .desc {
+      color: #555;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏠 Hastati 유틸리티 대시보드</h1>
+
+  <div class="section">
+    <h2>📊 리포트</h2>
+    <ul>
+      <li>
+        <a href="/report/summary">/report/summary</a>
+        <span class="desc">전체 유저 통계 및 시각화 리포트</span>
+      </li>
+      <li>
+        <a href="/report">/report</a>
+        <span class="desc">전체 유저 목록 (클릭 시 개별 리포트)</span>
+      </li>
+      <li>
+        <a href="/report?user_id=USERNAME">/report?user_id=USERNAME</a>
+        <span class="desc">👤 특정 유저의 활동 상세 리포트</span>
+      </li>
+      <li>
+        <a href="/report/heatmap">/report/heatmap</a>
+        <span class="desc">히트맵 컴포넌트</span>
+      </li>
+      <li>
+        <a href="/report/focus?period=7">/report/focus?period=7</a>
+        <span class="desc">시간대별 집중도 분석 (1, 7, 30일 등)</span>
+      </li>
+      <li>
+        <a href="/report/pareto">/report/pareto</a>
+        <span class="desc">불균형 분석 (Top 2, 5, 상위 20%)</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>🔧 관리</h2>
+    <ul>
+      <li>
+        <a href="/manage">/manage</a>
+        <span class="desc">유저 및 채널 추가/삭제 통합 관리</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>🧪 기타 API 또는 내부 확인용</h2>
+    <ul>
+      <li>
+        <a href="/users">/users</a>
+        <span class="desc">(개별 유저 DB 보기, 관리용)</span>
+      </li>
+      <li>
+        <a href="/channels">/channels</a>
+        <span class="desc">(등록된 채널 DB 보기, 관리용)</span>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

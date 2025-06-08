@@ -1,13 +1,44 @@
-<!doctype html>
-<title>Users</title>
-<h1>Tracked Users</h1>
-<form method="post" action="{{ url_for('add_user') }}">
-  <input name="username">
-  <button>Add</button>
-</form>
-<ul>
-  {% for u in users %}
-  <li>{{ u[1] }} {% if u[2] %}({{ u[2] }}){% endif %}
-      <a href="{{ url_for('delete_user', user_id=u[0]) }}">delete</a></li>
-  {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유저 관리</title>
+</head>
+<body>
+  <h1>📋 추적 유저 목록</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>[{{ category }}]</strong> {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form action="/users/add" method="POST">
+    <input type="text" name="username" placeholder="유저명 또는 닉네임" required>
+    <button type="submit">추가</button>
+  </form>
+
+  <table border="1">
+    <thead>
+      <tr><th>ID</th><th>이름</th><th>닉네임</th><th>역할</th><th>삭제</th></tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user[0] }}</td>
+        <td>{{ user[1] }}</td>
+        <td>{{ user[2] or '-' }}</td>
+        <td>{{ user[3] or '-' }}</td>
+        <td><a href="/users/delete/{{ user[0] }}">삭제</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="/channels">채널 관리로 이동</a>
+</body>
+</html>
