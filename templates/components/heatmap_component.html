@@ -1,4 +1,87 @@
-<!doctype html>
-<title>Heatmap</title>
-<h1>Heatmap</h1>
-<p>Data available for last 7 days.</p>
+<style>
+  .heatmap {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);  /* 1: 요일 or 날짜 라벨 + 24시간 */
+  gap: 2px;
+  font-family: sans-serif;
+  width: 100%;
+  max-width: 100%;
+}
+
+ .cell {
+  aspect-ratio: 1 / 1;        /* 높이도 자동 */
+  font-size: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.label {
+  background: #eee;
+  color: #000;
+}
+
+  .tooltip-text {
+  display: none;
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 5px 7px;
+  font-size: 3px;
+  border-radius: 4px;
+  text-align: left;
+  white-space: pre-line;
+  z-index: 99;
+
+  min-width: 100px;   /* 최소 폭 보장 */
+  max-width: 200px;   /* 너무 길면 줄바꿈 */
+  width: max-content; /* 내용에 따라 늘어남 */
+  word-break: break-word;
+}
+
+  .cell:hover .tooltip-text {
+    display: block;
+  }
+  .date-text {
+  white-space: normal;
+  word-break: break-word;
+  font-size: 10px;
+}
+
+</style>
+
+<div class="heatmap">
+  <!-- 시간 라벨 -->
+<div class="cell label"></div>
+{% for hour in range(24) %}
+  <div class="cell label">{{ "%02d"|format(hour) }}</div>
+{% endfor %}
+
+<!-- 날짜별 행 -->
+{% for date in date_labels %}
+  <!-- 날짜 라벨 셀 -->
+<div class="cell label"><span class="date-text">{{ date }}</span></div>
+
+  {% for hour in range(24) %}
+    {% set cell = heatmap[date][hour] %}
+    {% set count = cell.count %}
+    {% set users = cell.users %}
+    {% if count == 0 %}
+      <div class="cell"></div>
+    {% else %}
+      {% set adjusted = 10 if count > 10 else count %}
+      {% set green = 255 - (adjusted * 20) %}
+      <div class="cell" style="background-color: rgb(0, {{ green }}, 0)" title="{{ users|join('\n') }}">
+        {{ count }}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+</div>
