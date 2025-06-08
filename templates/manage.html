@@ -1,0 +1,27 @@
+<!doctype html>
+<title>Manage</title>
+<h1>Manage</h1>
+<h2>Add User</h2>
+<form method="post" action="{{ url_for('manage_add') }}">
+  <input type="hidden" name="target" value="user">
+  <input name="username">
+  <button type="submit">Add</button>
+</form>
+<h2>Add Channel</h2>
+<form method="post" action="{{ url_for('manage_add') }}">
+  <input type="hidden" name="target" value="channel">
+  <input name="name">
+  <button type="submit">Add</button>
+</form>
+<h2>Users</h2>
+<ul>
+  {% for u in users %}
+  <li>{{ u[1] }} <a href="{{ url_for('manage_delete_user', user_id=u[0]) }}">delete</a></li>
+  {% endfor %}
+</ul>
+<h2>Channels</h2>
+<ul>
+  {% for c in channels %}
+  <li>{{ c[1] }} <a href="{{ url_for('manage_delete_channel', channel_id=c[0]) }}">disable</a></li>
+  {% endfor %}
+</ul>

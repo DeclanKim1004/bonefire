@@ -1,0 +1,13 @@
+<!doctype html>
+<title>Users</title>
+<h1>Tracked Users</h1>
+<form method="post" action="{{ url_for('add_user') }}">
+  <input name="username">
+  <button>Add</button>
+</form>
+<ul>
+  {% for u in users %}
+  <li>{{ u[1] }} {% if u[2] %}({{ u[2] }}){% endif %}
+      <a href="{{ url_for('delete_user', user_id=u[0]) }}">delete</a></li>
+  {% endfor %}
+</ul>

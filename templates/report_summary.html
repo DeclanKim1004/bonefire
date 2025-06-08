@@ -1,0 +1,12 @@
+<!doctype html>
+<title>Summary</title>
+<h1>Summary</h1>
+<ul>
+  {% for user in summary %}
+  <li>{{ user.username }} - {{ user.total_minutes }} min ({{ user.entry_count }} entries)</li>
+  {% endfor %}
+</ul>
+<h2>Overall</h2>
+<p>Total users: {{ overall.total_users }}</p>
+<p>Total minutes: {{ overall.total_all_minutes }}</p>
+<p>Average minutes per user: {{ overall.avg_minutes_per_user }}</p>
