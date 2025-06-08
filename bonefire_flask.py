@@ -20,10 +20,10 @@ app.secret_key = "13252134"  # flash 메시지용
 
 def get_db_connection():
     return pymysql.connect(
-        host=DB_CONFIG.get("host", "localhost"),
-        user=DB_CONFIG.get("user", "root"),
-        password=DB_CONFIG.get("password", "declan94264@"),
-        database=DB_CONFIG.get("database", "hastati_logger_database"),
+        host=DB_CONFIG.get("host"),
+        user=DB_CONFIG.get("user"),
+        password=DB_CONFIG.get("password"),
+        database=DB_CONFIG.get("database"),
         port=DB_CONFIG.get("port", 3306),
         charset="utf8mb4",
         autocommit=True,
