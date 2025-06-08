@@ -7,8 +7,10 @@ import calendar
 from collections import defaultdict
 import math
 import statistics
+import os
 
-with open("/home/declan/src/config.json", "r", encoding="utf-8") as f:
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
     config = json.load(f)
 
 DB_CONFIG = config.get("database", {})
