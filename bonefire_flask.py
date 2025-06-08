@@ -429,7 +429,8 @@ def flames_pareto_view():
 
             top2 = calc_ratio(2)
             top5 = calc_ratio(5)
-            top20pct = calc_ratio(max(1, int(len(sorted_users) * 0.2)))
+            # calculate top 20% based on ember totals
+            top20pct = calc_ratio(max(1, int(len(sorted_embers) * 0.2)))
 
             pareto_data.append((label, {"top2": top2, "top5": top5, "top20pct": top20pct, "total_users": len(ember_totals)}))
 
