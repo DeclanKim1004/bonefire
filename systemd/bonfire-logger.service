@@ -1,0 +1,12 @@
+[Unit]
+Description=Bonfire Discord Logger
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/bonfire
+ExecStart=/usr/bin/env python3 /opt/bonfire/bonfire_logger.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
