@@ -66,7 +66,7 @@
 </head>
 <body>
 
-  <h1>🛠 유저 및 채널 관리</h1>
+  <h1>🛠 잿불 및 장작더미 관리</h1>
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <ul>
@@ -83,8 +83,8 @@
 
     <!-- 유저 관리 -->
     <div class="manage-block">
-      <h2>👤 유저 관리</h2>
-      <form action="{{ url_for('manage_add') }}" method="post">
+      <h2>👤 잿불 관리</h2>
+      <form action="{{ url_for('kindle_add') }}" method="post">
         <input type="hidden" name="target" value="user">
         <input type="text" name="username" placeholder="디스코드 유저명" required>
         <button type="submit">추가</button>
@@ -100,13 +100,13 @@
           </tr>
         </thead>
         <tbody>
-          {% for user in users %}
+          {% for ember in embers %}
           <tr>
-            <td>{{ user[0] }}</td>
-            <td>{{ user[1] }}</td>
-            <td>{{ user[2] }}</td>
-            <td>{{ user[3] }}</td>
-            <td><a href="{{ url_for('manage_delete_user', user_id=user[0]) }}">삭제</a></td>
+            <td>{{ ember[0] }}</td>
+            <td>{{ ember[1] }}</td>
+            <td>{{ ember[2] }}</td>
+            <td>{{ ember[3] }}</td>
+            <td><a href="{{ url_for('kindle_delete_ember', ember_id=ember[0]) }}">삭제</a></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -115,8 +115,8 @@
 
     <!-- 채널 관리 -->
     <div class="manage-block">
-      <h2>📢 채널 관리</h2>
-      <form action="{{ url_for('manage_add') }}" method="post">
+      <h2>📢 장작더미 관리</h2>
+      <form action="{{ url_for('kindle_add') }}" method="post">
         <input type="hidden" name="target" value="channel">
         <input type="text" name="name" placeholder="디스코드 채널명" required>
         <button type="submit">추가</button>
@@ -131,11 +131,11 @@
           </tr>
         </thead>
         <tbody>
-          {% for channel in channels %}
+          {% for pyre in pyres %}
           <tr>
-            <td>{{ channel[0] }}</td>
-            <td>{{ channel[1] }}</td>
-            <td><a href="{{ url_for('manage_delete_channel', channel_id=channel[0]) }}">삭제</a></td>
+            <td>{{ pyre[0] }}</td>
+            <td>{{ pyre[1] }}</td>
+            <td><a href="{{ url_for('kindle_delete_pyre', pyre_id=pyre[0]) }}">삭제</a></td>
           </tr>
           {% endfor %}
         </tbody>

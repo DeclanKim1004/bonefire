@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>{{ username }} – 활동 리포트</title>
+  <title>{{ username }} – 불꽃 리포트</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; }
     h2 { color: #333; }
@@ -21,13 +21,13 @@
   </style>
 </head>
 <body>
-  <h2>{{ username }} – 활동 리포트 (최근 {{ days if days != 0 else '전체' }}일)</h2>
+  <h2>{{ username }} – 불꽃 리포트 (최근 {{ days if days != 0 else '전체' }}일)</h2>
 
   <div class="periods">
     📆 기간 선택:
-    <a href="/report/{{ user_id }}/7">7일</a>
-    <a href="/report/{{ user_id }}/30">30일</a>
-    <a href="/report/{{ user_id }}/0">전체</a>
+    <a href="/flames/{{ user_id }}/7">7일</a>
+    <a href="/flames/{{ user_id }}/30">30일</a>
+    <a href="/flames/{{ user_id }}/0">전체</a>
   </div>
 
   <ul>
@@ -38,6 +38,6 @@
     <li><span class="label">주요 활동 시간대:</span> → {{ top_hour_range }}</li>
   </ul>
 
-  <a href="/report">← 유저 목록으로 돌아가기</a>
+  <a href="/flames">← 잿불 목록으로 돌아가기</a>
 </body>
 </html>

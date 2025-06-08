@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>유저 관리</title>
+  <title>잿불 관리</title>
 </head>
 <body>
   <h1>📋 추적 유저 목록</h1>
@@ -17,7 +17,7 @@
     {% endif %}
   {% endwith %}
 
-  <form action="/users/add" method="POST">
+  <form action="/embers/add" method="POST">
     <input type="text" name="username" placeholder="유저명 또는 닉네임" required>
     <button type="submit">추가</button>
   </form>
@@ -27,18 +27,18 @@
       <tr><th>ID</th><th>이름</th><th>닉네임</th><th>역할</th><th>삭제</th></tr>
     </thead>
     <tbody>
-      {% for user in users %}
+      {% for ember in embers %}
       <tr>
-        <td>{{ user[0] }}</td>
-        <td>{{ user[1] }}</td>
-        <td>{{ user[2] or '-' }}</td>
-        <td>{{ user[3] or '-' }}</td>
-        <td><a href="/users/delete/{{ user[0] }}">삭제</a></td>
+        <td>{{ ember[0] }}</td>
+        <td>{{ ember[1] }}</td>
+        <td>{{ ember[2] or '-' }}</td>
+        <td>{{ ember[3] or '-' }}</td>
+        <td><a href="/embers/delete/{{ ember[0] }}">삭제</a></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <a href="/channels">채널 관리로 이동</a>
+  <a href="/pyres">장작더미 관리로 이동</a>
 </body>
 </html>
