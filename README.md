@@ -9,6 +9,16 @@ This repository contains a Discord bot and accompanying web utilities inspired b
 - **bonfire_web.py** – Small FastAPI server placeholder.
 - **bonfire_tunnel.py** – Starts an ngrok tunnel, writes the public URL to `ngrok_url.txt` and automatically renews the tunnel every few hours.
 
+======
+## Installation
+
+Clone the repository and install the Python dependencies:
+
+```bash
+git clone https://github.com/Phxntxm/Bonfire.git
+cd Bonfire
+python3 -m pip install --upgrade -r requirements.txt
+```
 ## Systemd Setup
 Service files for running the logger, web dashboard and ngrok tunnel with `systemctl` live in the `systemd/` directory. The `install_systemd.sh` helper copies and enables them:
 
@@ -17,3 +27,5 @@ Service files for running the logger, web dashboard and ngrok tunnel with `syste
 ```
 
 Edit the service files if your project path differs from `/opt/bonfire` and then run the script with root privileges.
+
+
