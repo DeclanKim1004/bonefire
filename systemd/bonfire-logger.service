@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/bonfire
-ExecStart=/usr/bin/env python3 /opt/bonfire/bonfire_logger.py
+ExecStart=/opt/bonfire/bonefire_env/bin/python /opt/bonfire/bonfire_logger.py
 Restart=always
 
 [Install]
