@@ -6,6 +6,6 @@ This repository contains a simple Discord bot and web server inspired by the "Bo
 
 - **bonfire_logger.py** – Discord bot that records user voice sessions and provides a `/bonfire` slash command to display the current tunnel URL.
 - **bonfire_web.py** – Small FastAPI server placeholder.
-- **bonfire_tunnel.py** – Utility to start an ngrok tunnel and write the public URL to `ngrok_url.txt`.
+- **bonfire_tunnel.py** – Starts an ngrok tunnel, writes the public URL to `ngrok_url.txt` and automatically renews the tunnel every few hours.
 
-Run `bonfire_tunnel.py` first to expose the FastAPI server, then execute `bonfire_logger.py`.
+Set the `NGROK_AUTH_TOKEN` environment variable if you have one, then run `bonfire_tunnel.py` to expose the FastAPI server. Afterwards execute `bonfire_logger.py`.
