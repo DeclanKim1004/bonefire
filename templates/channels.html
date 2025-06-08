@@ -1,0 +1,12 @@
+<!doctype html>
+<title>Channels</title>
+<h1>Tracked Channels</h1>
+<form method="post" action="{{ url_for('add_channel') }}">
+  <input name="name">
+  <button>Add</button>
+</form>
+<ul>
+  {% for c in channels %}
+  <li>{{ c[1] }} <a href="{{ url_for('delete_channel', channel_id=c[0]) }}">disable</a></li>
+  {% endfor %}
+</ul>
