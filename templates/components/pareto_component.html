@@ -1,4 +1,32 @@
-<!doctype html>
-<title>Pareto</title>
-<h1>Pareto Analysis</h1>
-<p>Pareto data placeholder.</p>
+<div class="pareto-container">
+  <h3>🟠 활동 불균형 분석</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>기간</th>
+        <th>Top 2</th>
+        <th>Top 5</th>
+        <th>상위 20%</th>
+        <th>전체 인원</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for label, stats in pareto_data %}
+        {% if stats %}
+        <tr>
+          <td>{{ label }}</td>
+          <td>{{ stats.top2 }}%</td>
+          <td>{{ stats.top5 }}%</td>
+          <td>{{ stats.top20pct }}%</td>
+          <td>{{ stats.total_users }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td>{{ label }}</td>
+          <td colspan="4">데이터 없음</td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

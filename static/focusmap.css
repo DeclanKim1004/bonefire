@@ -1,0 +1,29 @@
+.focusmap {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  gap: 2px;
+  font-family: sans-serif;
+  width: 100%;
+  max-width: 100%;
+}
+
+.row {
+  display: contents;
+}
+
+.cell {
+  aspect-ratio: 1 / 1;
+  font-size: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  border-radius: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.label {
+  background: #eee;
+  color: #000;
+}

@@ -1,4 +1,35 @@
-<!doctype html>
-<title>Focus</title>
-<h1>Focus Map</h1>
-<p>Focus data placeholder.</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='focusmap.css') }}">
+
+<div class="focusmap-container">
+  <h3>🟣 활동 집중도 및 불균형 분석 (시간대별 비교)</h3>
+
+  <div class="focusmap">
+    <!-- 상단 시간 라벨 -->
+    <div class="row label-row">
+      <div class="cell label">기간</div>
+      {% for hour in range(24) %}
+        <div class="cell label">{{ "%02d"|format(hour) }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- 각 기간별 집중도 행 -->
+{% for label, focus_map in focus_data %}
+<div class="row">
+  <div class="cell label">{{ label }}</div>
+  {% for hour in range(24) %}
+    {% set item = focus_map.get(hour) %}
+    {% if item %}
+      {% set percent = item.percent %}
+      {% set lightness = 90 - (percent * 0.6)|int %}  <!-- 0~100% → 밝기 90% ~ 30% -->
+      <div class="cell" style="background-color: hsl(220, 100%, {{ lightness }}%);" title="{{ percent }}%">
+        {{ percent }}%
+      </div>
+    {% else %}
+      <div class="cell"></div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endfor %}
+
+  </div>
+</div>
