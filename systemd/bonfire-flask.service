@@ -1,0 +1,12 @@
+[Unit]
+Description=Bonfire Flask Web Interface
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/bonfire
+ExecStart=/usr/bin/env python3 /opt/bonfire/bonfire_flask.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

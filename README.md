@@ -8,3 +8,12 @@ This repository contains a Discord bot and accompanying web utilities inspired b
 - **bonfire_flask.py** – Flask based web dashboard for managing tracked embers/pyres and viewing flame reports.
 - **bonfire_web.py** – Small FastAPI server placeholder.
 - **bonfire_tunnel.py** – Starts an ngrok tunnel, writes the public URL to `ngrok_url.txt` and automatically renews the tunnel every few hours.
+
+## Systemd Setup
+Service files for running the logger, web dashboard and ngrok tunnel with `systemctl` live in the `systemd/` directory. The `install_systemd.sh` helper copies and enables them:
+
+```bash
+./install_systemd.sh
+```
+
+Edit the service files if your project path differs from `/opt/bonfire` and then run the script with root privileges.
