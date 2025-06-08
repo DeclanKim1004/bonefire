@@ -6,8 +6,10 @@ This repository contains a Discord bot and accompanying web utilities inspired b
 
 - **bonefire_logger.py** – Discord bot that records user voice sessions and provides a `/bonefire` slash command to display the current tunnel URL.
 - **bonefire_flask.py** – Flask based web dashboard for managing tracked embers/pyres and viewing flame reports.
-- **bonefire_web.py** – Small FastAPI server placeholder.
 - **bonefire_tunnel.py** – Starts an ngrok tunnel, writes the public URL to `ngrok_url.txt` and automatically renews the tunnel every few hours.
+
+The Flask dashboard and ngrok tunnel listen on port **5000**, while the Discord
+logger exposes its FastAPI endpoints on port **8000**.
 
 ======
 ## Installation
@@ -19,6 +21,9 @@ git clone https://github.com/Phxntxm/Bonefire.git
 cd Bonefire
 python3 -m pip install --upgrade -r requirements.txt
 ```
+
+Create a `config.json` file in the project root after cloning. This configuration is loaded by both the Flask dashboard and the Discord logger. An example path would be `/opt/bonefire/config.json` when running the systemd services.
+
 ## Systemd Setup
 Service files for running the logger, web dashboard and ngrok tunnel with `systemctl` live in the `systemd/` directory. The `install_systemd.sh` helper copies and enables them:
 

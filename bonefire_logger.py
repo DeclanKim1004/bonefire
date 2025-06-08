@@ -23,7 +23,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger("bonefire_logger")
 
-with open("/home/declan/src/config.json", "r", encoding="utf-8") as f:
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
     config = json.load(f)
 
 DISCORD_TOKEN = config["token"]
@@ -271,7 +272,7 @@ class TrackingBot(discord.Client):
 
 # ---------- Run ----------
 def run_api():
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 if __name__ == "__main__":
     bot = TrackingBot()
