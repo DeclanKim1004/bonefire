@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+Flask
+requests
+PyMySQL
+discord.py
+nest_asyncio
+pyngrok
