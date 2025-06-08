@@ -17,7 +17,7 @@ logger exposes its FastAPI endpoints on port **8000**.
 Clone the repository and install the Python dependencies:
 
 ```bash
-git clone https://github.com/Phxntxm/Bonefire.git
+git clone https://github.com/DeclanKim1004/Bonefire.git
 cd Bonefire
 python3 -m pip install --upgrade -r requirements.txt
 ```
