@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>유저별 활동 리포트</title>
+  <title>잿불별 불꽃 리포트</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 2em; background: #f7f7f7; }
     h2 { margin-bottom: 1em; }
@@ -13,10 +13,10 @@
   </style>
 </head>
 <body>
-  <h2>📋 유저별 활동 리포트</h2>
+  <h2>📋 잿불별 불꽃 리포트</h2>
   <ul>
-    {% for user in users %}
-      <li><a href="/report/{{ user[0] }}/7">{{ user[1] }} (ID: {{ user[0] }})</a></li>
+    {% for ember in embers %}
+      <li><a href="/flames/{{ ember[0] }}/7">{{ ember[1] }} (ID: {{ ember[0] }})</a></li>
     {% endfor %}
   </ul>
   <a href="{{ url_for('home') }}">홈으로 돌아가기</a>

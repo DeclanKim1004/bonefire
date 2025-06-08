@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>채널 관리</title>
+  <title>장작더미 관리</title>
 </head>
 <body>
   <h1>🎙️ 추적 채널 목록</h1>
@@ -17,7 +17,7 @@
     {% endif %}
   {% endwith %}
 
-  <form action="/channels/add" method="POST">
+  <form action="/pyres/add" method="POST">
     <input type="text" name="name" placeholder="채널 이름" required>
     <button type="submit">추가</button>
   </form>
@@ -27,16 +27,16 @@
       <tr><th>ID</th><th>채널 이름</th><th>삭제</th></tr>
     </thead>
     <tbody>
-      {% for channel in channels %}
+      {% for pyre in pyres %}
       <tr>
-        <td>{{ channel[0] }}</td>
-        <td>{{ channel[1] }}</td>
-        <td><a href="/channels/delete/{{ channel[0] }}">삭제</a></td>
+        <td>{{ pyre[0] }}</td>
+        <td>{{ pyre[1] }}</td>
+        <td><a href="/pyres/delete/{{ pyre[0] }}">삭제</a></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <a href="/users">유저 관리로 이동</a>
+  <a href="/embers">잿불 관리로 이동</a>
 </body>
 </html>

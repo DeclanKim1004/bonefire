@@ -5,6 +5,6 @@ This repository contains a Discord bot and accompanying web utilities inspired b
 ## Components
 
 - **bonfire_logger.py** – Discord bot that records user voice sessions and provides a `/bonfire` slash command to display the current tunnel URL.
-- **bonfire_flask.py** – Flask based web dashboard for managing tracked users/channels and viewing usage reports.
+- **bonfire_flask.py** – Flask based web dashboard for managing tracked embers/pyres and viewing flame reports.
 - **bonfire_web.py** – Small FastAPI server placeholder.
 - **bonfire_tunnel.py** – Starts an ngrok tunnel, writes the public URL to `ngrok_url.txt` and automatically renews the tunnel every few hours.

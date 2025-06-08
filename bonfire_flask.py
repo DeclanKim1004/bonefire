@@ -30,110 +30,110 @@ def get_db_connection():
     )
 
 
-@app.route("/users")
-def list_users():
+@app.route("/embers")
+def list_embers():
     db = get_db_connection()
-    users = []
+    embers = []
     try:
         with db.cursor() as cursor:
             cursor.execute("SELECT user_id, username, nickname, role_name FROM tracked_users")
-            users = cursor.fetchall()
+            embers = cursor.fetchall()
     finally:
         db.close()
-    return render_template("users.html", users=users)
+    return render_template("embers.html", embers=embers)
 
 
-@app.route("/users/add", methods=["POST"])
-def add_user():
+@app.route("/embers/add", methods=["POST"])
+def add_ember():
     username = request.form.get("username")
     if not username:
-        flash("유저명을 입력해주세요.", "error")
-        return redirect(url_for("list_users"))
+        flash("잿불 이름을 입력해주세요.", "error")
+        return redirect(url_for("list_embers"))
 
     res = requests.post(f"{BOT_API_URL}/verify_user", json={"name": username})
     data = res.json()
 
     if data.get("success"):
-        flash(f"✅ 유저 {username} 등록 성공 (ID: {data.get('user_id')})", "success")
+        flash(f"🔥 잿불 {username}이 피어올랐습니다 (ID: {data.get('user_id')})", "success")
     else:
-        flash(f"❌ 등록 실패: {data.get('reason')}", "error")
+        flash(f"❄️ 불씨가 꺼졌습니다: {data.get('reason')}", "error")
 
-    return redirect(url_for("list_users"))
+    return redirect(url_for("list_embers"))
 
 
-@app.route("/users/delete/<int:user_id>")
-def delete_user(user_id):
+@app.route("/embers/delete/<int:ember_id>")
+def delete_ember(ember_id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            cursor.execute("DELETE FROM tracked_users WHERE user_id = %s", (user_id,))
-            cursor.execute("DELETE FROM voice_sessions WHERE user_id = %s", (user_id,))
+            cursor.execute("DELETE FROM tracked_users WHERE user_id = %s", (ember_id,))
+            cursor.execute("DELETE FROM voice_sessions WHERE user_id = %s", (ember_id,))
     finally:
         db.close()
-    return redirect(url_for("list_users"))
+    return redirect(url_for("list_embers"))
 
 
-@app.route("/channels")
-def list_channels():
+@app.route("/pyres")
+def list_pyres():
     db = get_db_connection()
-    channels = []
+    pyres = []
     try:
         with db.cursor() as cursor:
             cursor.execute("SELECT channel_id, name FROM tracked_channels WHERE enabled = TRUE")
-            channels = cursor.fetchall()
+            pyres = cursor.fetchall()
     finally:
         db.close()
-    return render_template("channels.html", channels=channels)
+    return render_template("pyres.html", pyres=pyres)
 
 
-@app.route("/channels/add", methods=["POST"])
-def add_channel():
-    channel_name = request.form.get("name")
-    if not channel_name:
-        flash("채널 이름을 입력해주세요.", "error")
-        return redirect(url_for("list_channels"))
+@app.route("/pyres/add", methods=["POST"])
+def add_pyre():
+    pyre_name = request.form.get("name")
+    if not pyre_name:
+        flash("장작더미 이름을 입력해주세요.", "error")
+        return redirect(url_for("list_pyres"))
 
-    res = requests.post(f"{BOT_API_URL}/verify_channel", json={"name": channel_name})
+    res = requests.post(f"{BOT_API_URL}/verify_channel", json={"name": pyre_name})
     data = res.json()
 
     if data.get("success"):
-        flash(f"✅ 채널 {channel_name} 등록 성공 (ID: {data.get('channel_id')})", "success")
+        flash(f"🔥 장작더미 {pyre_name}이 추가되었습니다 (ID: {data.get('channel_id')})", "success")
     else:
-        flash(f"❌ 등록 실패: {data.get('reason')}", "error")
+        flash(f"❄️ 불씨가 꺼졌습니다: {data.get('reason')}", "error")
 
-    return redirect(url_for("list_channels"))
+    return redirect(url_for("list_pyres"))
 
 
-@app.route("/channels/delete/<int:channel_id>")
-def delete_channel(channel_id):
+@app.route("/pyres/delete/<int:pyre_id>")
+def delete_pyre(pyre_id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            cursor.execute("UPDATE tracked_channels SET enabled = FALSE WHERE channel_id = %s", (channel_id,))
+            cursor.execute("UPDATE tracked_channels SET enabled = FALSE WHERE channel_id = %s", (pyre_id,))
     finally:
         db.close()
-    return redirect(url_for("list_channels"))
+    return redirect(url_for("list_pyres"))
 
 
-@app.route("/report")
-def report_user_list():
+@app.route("/flames")
+def flames_ember_list():
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
             cursor.execute("SELECT DISTINCT user_id, username FROM voice_sessions ORDER BY username")
-            users = cursor.fetchall()
+            embers = cursor.fetchall()
     finally:
         db.close()
-    return render_template("report_users.html", users=users)
+    return render_template("flames_embers.html", embers=embers)
 
 
-@app.route("/report/<int:user_id>")
-def report(user_id):
-    return redirect(url_for("report_range", user_id=user_id, days=7))
+@app.route("/flames/<int:ember_id>")
+def flames(ember_id):
+    return redirect(url_for("flames_range", ember_id=ember_id, days=7))
 
 
-@app.route("/report/<int:user_id>/<int:days>")
-def report_range(user_id, days):
+@app.route("/flames/<int:ember_id>/<int:days>")
+def flames_range(ember_id, days):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
@@ -149,12 +149,12 @@ def report_range(user_id, days):
                 FROM voice_sessions
                 WHERE user_id = %s AND start_time BETWEEN %s AND %s
             """,
-                (user_id, start_date, end_date),
+                (ember_id, start_date, end_date),
             )
             sessions = cursor.fetchall()
 
         if not sessions:
-            return f"<h3>사용자 {user_id}의 활동 기록이 없습니다.</h3>"
+            return f"<h3>사용자 {ember_id}의 활동 기록이 없습니다.</h3>"
 
         username = sessions[0][0]
         total_seconds = sum(row[3] for row in sessions)
@@ -184,9 +184,9 @@ def report_range(user_id, days):
         avg_entries_per_day = entry_count / num_active_days
 
         return render_template(
-            "report.html",
+            "flames.html",
             username=username,
-            user_id=user_id,
+            user_id=ember_id,
             total_minutes=total_minutes,
             entry_count=entry_count,
             avg_minutes=average_minutes,
@@ -201,8 +201,8 @@ def report_range(user_id, days):
         db.close()
 
 
-@app.route("/report/summary")
-def report_summary():
+@app.route("/flames/summary")
+def flames_summary():
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
@@ -232,7 +232,7 @@ def report_summary():
 
         summary = []
         total_all_seconds = 0
-        user_total_minutes_list = []
+        ember_total_minutes_list = []
 
         for user_id, stats in user_stats.items():
             total_minutes = stats["total_seconds"] // 60
@@ -253,36 +253,36 @@ def report_summary():
                 }
             )
 
-            user_total_minutes_list.append(total_minutes)
+            ember_total_minutes_list.append(total_minutes)
             total_all_seconds += stats["total_seconds"]
 
         # \U0001f4ca 전체 통계 계산
         total_all_minutes = total_all_seconds // 60
-        total_users = len(summary)
-        avg_minutes_per_user = total_all_minutes // total_users if total_users else 0
+        total_embers = len(summary)
+        avg_minutes_per_ember = total_all_minutes // total_embers if total_embers else 0
 
-        max_user = max(summary, key=lambda u: u["total_minutes"])
-        min_user = min(summary, key=lambda u: u["total_minutes"])
+        max_ember = max(summary, key=lambda u: u["total_minutes"])
+        min_ember = min(summary, key=lambda u: u["total_minutes"])
 
-        std_dev = int(statistics.stdev(user_total_minutes_list)) if len(user_total_minutes_list) >= 2 else 0
+        std_dev = int(statistics.stdev(ember_total_minutes_list)) if len(ember_total_minutes_list) >= 2 else 0
 
         overall_stats = {
-            "total_users": total_users,
+            "total_users": total_embers,
             "total_all_minutes": total_all_minutes,
-            "avg_minutes_per_user": avg_minutes_per_user,
-            "max_user": max_user,
-            "min_user": min_user,
+            "avg_minutes_per_user": avg_minutes_per_ember,
+            "max_user": max_ember,
+            "min_user": min_ember,
             "std_dev": std_dev,
         }
         summary.sort(key=lambda u: u["total_minutes"], reverse=True)
-        return render_template("report_summary.html", summary=summary, overall=overall_stats)
+        return render_template("flames_summary.html", summary=summary, overall=overall_stats)
 
     finally:
         db.close()
 
 
-@app.route("/report/heatmap")
-def hastati_heatmap():
+@app.route("/flames/heatmap")
+def flames_heatmap():
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
@@ -321,8 +321,8 @@ def hastati_heatmap():
         db.close()
 
 
-@app.route("/report/focus")
-def report_focus_view():
+@app.route("/flames/focus")
+def flames_focus_view():
     now = datetime.now()
 
     def get_focus_map(start_time):
@@ -346,12 +346,12 @@ def report_focus_view():
 
         total_duration = 0
         time_blocks = defaultdict(int)
-        user_totals = defaultdict(int)
+        ember_totals = defaultdict(int)
 
         for user_id, start, duration in rows:
             key = start.hour
             time_blocks[key] += duration
-            user_totals[user_id] += duration
+            ember_totals[user_id] += duration
             total_duration += duration
 
         focus_map = {}
@@ -361,12 +361,12 @@ def report_focus_view():
                 percent = round(dur / total_duration * 100, 2)
                 focus_map[hour] = {"percent": percent}
 
-        sorted_users = sorted(user_totals.items(), key=lambda x: x[1], reverse=True)
-        top_n = math.ceil(len(sorted_users) * 0.2)
-        top_duration = sum(x[1] for x in sorted_users[:top_n])
+        sorted_embers = sorted(ember_totals.items(), key=lambda x: x[1], reverse=True)
+        top_n = math.ceil(len(sorted_embers) * 0.2)
+        top_duration = sum(x[1] for x in sorted_embers[:top_n])
         top_ratio = round(top_duration / total_duration * 100, 2)
 
-        return focus_map, top_n, top_ratio, len(user_totals)
+        return focus_map, top_n, top_ratio, len(ember_totals)
 
     ranges = [
         ("1일", now - timedelta(days=1)),
@@ -379,15 +379,15 @@ def report_focus_view():
     pareto_data = []
 
     for label, start_time in ranges:
-        fmap, top_n, top_ratio, total_users = get_focus_map(start_time)
+        fmap, top_n, top_ratio, total_embers = get_focus_map(start_time)
         focus_data.append((label, fmap))
-        pareto_data.append({"label": label, "top_n": top_n, "top_ratio": top_ratio, "total_users": total_users})
+        pareto_data.append({"label": label, "top_n": top_n, "top_ratio": top_ratio, "total_users": total_embers})
 
     return render_template("components/focus_component.html", focus_data=focus_data, pareto_data=pareto_data)
 
 
-@app.route("/report/pareto")
-def report_pareto_view():
+@app.route("/flames/pareto")
+def flames_pareto_view():
     now = datetime.now()
     ranges = {
         "1일": now - timedelta(days=1),
@@ -415,21 +415,21 @@ def report_pareto_view():
                 pareto_data.append((label, None))
                 continue
 
-            user_totals = defaultdict(int)
+            ember_totals = defaultdict(int)
             for uid, dur in filtered:
-                user_totals[uid] += dur
+                ember_totals[uid] += dur
 
-            total_duration = sum(user_totals.values())
-            sorted_users = sorted(user_totals.items(), key=lambda x: x[1], reverse=True)
+            total_duration = sum(ember_totals.values())
+            sorted_embers = sorted(ember_totals.items(), key=lambda x: x[1], reverse=True)
 
             def calc_ratio(top_n):
-                return round(sum(x[1] for x in sorted_users[:top_n]) / total_duration * 100, 2)
+                return round(sum(x[1] for x in sorted_embers[:top_n]) / total_duration * 100, 2)
 
             top2 = calc_ratio(2)
             top5 = calc_ratio(5)
             top20pct = calc_ratio(max(1, int(len(sorted_users) * 0.2)))
 
-            pareto_data.append((label, {"top2": top2, "top5": top5, "top20pct": top20pct, "total_users": len(user_totals)}))
+            pareto_data.append((label, {"top2": top2, "top5": top5, "top20pct": top20pct, "total_users": len(ember_totals)}))
 
         return render_template("components/pareto_component.html", pareto_data=pareto_data)
     finally:
@@ -441,75 +441,75 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/manage")
-def manage_page():
+@app.route("/kindle")
+def kindle_page():
     db = get_db_connection()
-    users = []
-    channels = []
+    embers = []
+    pyres = []
     try:
         with db.cursor() as cursor:
             cursor.execute("SELECT user_id, username, nickname, role_name FROM tracked_users")
-            users = cursor.fetchall()
+            embers = cursor.fetchall()
             cursor.execute("SELECT channel_id, name FROM tracked_channels WHERE enabled = TRUE")
-            channels = cursor.fetchall()
+            pyres = cursor.fetchall()
     finally:
         db.close()
 
-    return render_template("manage.html", users=users, channels=channels)
+    return render_template("kindle.html", embers=embers, pyres=pyres)
 
 
-@app.route("/manage/add", methods=["POST"])
-def manage_add():
+@app.route("/kindle/add", methods=["POST"])
+def kindle_add():
     target = request.form.get("target")
     db = get_db_connection()
 
     if target == "user":
         username = request.form.get("username")
         if not username:
-            flash("유저명을 입력해주세요.", "error")
+            flash("잿불 이름을 입력해주세요.", "error")
         else:
             res = requests.post(f"{BOT_API_URL}/verify_user", json={"name": username})
             data = res.json()
             if data.get("success"):
-                flash(f"✅ 유저 {username} 등록 성공 (ID: {data.get('user_id')})", "success")
+                flash(f"🔥 잿불 {username}이 피어올랐습니다 (ID: {data.get('user_id')})", "success")
             else:
-                flash(f"❌ 등록 실패: {data.get('reason')}", "error")
+                flash(f"❄️ 불씨가 꺼졌습니다: {data.get('reason')}", "error")
 
     elif target == "channel":
-        channel_name = request.form.get("name")
-        if not channel_name:
-            flash("채널명을 입력해주세요.", "error")
+        pyre_name = request.form.get("name")
+        if not pyre_name:
+            flash("장작더미 이름을 입력해주세요.", "error")
         else:
-            res = requests.post(f"{BOT_API_URL}/verify_channel", json={"name": channel_name})
+            res = requests.post(f"{BOT_API_URL}/verify_channel", json={"name": pyre_name})
             data = res.json()
             if data.get("success"):
-                flash(f"✅ 채널 {channel_name} 등록 성공 (ID: {data.get('channel_id')})", "success")
+                flash(f"🔥 장작더미 {pyre_name}이 추가되었습니다 (ID: {data.get('channel_id')})", "success")
             else:
-                flash(f"❌ 등록 실패: {data.get('reason')}", "error")
+                flash(f"❄️ 불씨가 꺼졌습니다: {data.get('reason')}", "error")
 
-    return redirect(url_for("manage_page"))
+    return redirect(url_for("kindle_page"))
 
 
-@app.route("/manage/delete/user/<int:user_id>")
-def manage_delete_user(user_id):
+@app.route("/kindle/delete/ember/<int:ember_id>")
+def kindle_delete_ember(ember_id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            cursor.execute("DELETE FROM tracked_users WHERE user_id = %s", (user_id,))
+            cursor.execute("DELETE FROM tracked_users WHERE user_id = %s", (ember_id,))
     finally:
         db.close()
-    return redirect(url_for("manage_page"))
+    return redirect(url_for("kindle_page"))
 
 
-@app.route("/manage/delete/channel/<int:channel_id>")
-def manage_delete_channel(channel_id):
+@app.route("/kindle/delete/pyre/<int:pyre_id>")
+def kindle_delete_pyre(pyre_id):
     db = get_db_connection()
     try:
         with db.cursor() as cursor:
-            cursor.execute("UPDATE tracked_channels SET enabled = FALSE WHERE channel_id = %s", (channel_id,))
+            cursor.execute("UPDATE tracked_channels SET enabled = FALSE WHERE channel_id = %s", (pyre_id,))
     finally:
         db.close()
-    return redirect(url_for("manage_page"))
+    return redirect(url_for("kindle_page"))
 
 
 if __name__ == "__main__":
