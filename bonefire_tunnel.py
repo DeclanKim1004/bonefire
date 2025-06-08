@@ -18,7 +18,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
-logger = logging.getLogger("bonfire_tunnel")
+logger = logging.getLogger("bonefire_tunnel")
 
 
 def warm_up(url: str) -> None:

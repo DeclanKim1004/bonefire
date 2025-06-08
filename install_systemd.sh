@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install and enable systemd services for Bonfire
+# Install and enable systemd services for Bonefire
 set -euo pipefail
 
 UNIT_DIR=/etc/systemd/system

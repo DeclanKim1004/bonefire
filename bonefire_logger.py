@@ -21,7 +21,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger("bonfire_logger")
+logger = logging.getLogger("bonefire_logger")
 
 with open("/home/declan/src/config.json", "r", encoding="utf-8") as f:
     config = json.load(f)
@@ -180,9 +180,9 @@ class TrackingBot(discord.Client):
         self.user_sessions = {}
 
     async def setup_hook(self):
-        @app_commands.command(name="bonfire", description="현재 화톳불 링크를 확인합니다.")
+        @app_commands.command(name="bonefire", description="현재 화톳불 링크를 확인합니다.")
         @app_commands.guild_only()
-        async def bonfire_command(interaction: discord.Interaction):
+        async def bonefire_command(interaction: discord.Interaction):
             member = interaction.guild.get_member(interaction.user.id)
             if not member or not any(
                 r.name in [
@@ -211,7 +211,7 @@ class TrackingBot(discord.Client):
                     "❗ ngrok 링크를 찾을 수 없습니다.", ephemeral=True
                 )
 
-        self.tree.add_command(bonfire_command, guild=discord.Object(id=GUILD_ID))
+        self.tree.add_command(bonefire_command, guild=discord.Object(id=GUILD_ID))
         await self.tree.sync(guild=discord.Object(id=GUILD_ID))
 
     async def on_ready(self):
