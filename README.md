@@ -22,15 +22,5 @@ cd Bonefire
 python3 -m pip install --upgrade -r requirements.txt
 ```
 
-Create a `config.json` file in the project root after cloning. This configuration is loaded by both the Flask dashboard and the Discord logger. An example path would be `/opt/bonefire/config.json` when running the systemd services.
-
-## Systemd Setup
-Service files for running the logger, web dashboard and ngrok tunnel with `systemctl` live in the `systemd/` directory. The `install_systemd.sh` helper copies and enables them:
-
-```bash
-./install_systemd.sh
-```
-
-Edit the service files if your project path differs from `/opt/bonefire` and then run the script with root privileges.
-
+Create a `config.json` file in the project root after cloning. This configuration is loaded by both the Flask dashboard and the Discord logger. An example path would be `/opt/bonefire/config.json` when running the service.
 
