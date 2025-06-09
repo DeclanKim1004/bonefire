@@ -44,6 +44,7 @@ Reports are stored in a table named `scar_notes` with the following columns:
 |------------------|-------------------------------|
 | `id`             | primary key                   |
 | `target_username`| user the note refers to       |
+| `target_nickname`| nickname at time of note      |
 | `content`        | text of the note              |
 | `added_by_name`  | reporter display name         |
 | `created_at`     | timestamp when note was added |
