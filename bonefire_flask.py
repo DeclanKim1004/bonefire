@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import pymysql
 import json
 import requests
+import jwt
 from datetime import datetime, timedelta
 import calendar
 from collections import defaultdict
@@ -16,6 +17,7 @@ with open(CONFIG_PATH, "r", encoding="utf-8") as f:
 
 DB_CONFIG = config.get("database", {})
 BOT_API_URL = "http://localhost:8000"  # 봇 FastAPI 서버 주소
+JWT_SECRET = config.get("jwt_secret", "change_me")
 
 app = Flask(__name__)
 app.secret_key = "13252134"  # flash 메시지용
@@ -544,11 +546,21 @@ def kindle_delete_pyre(pyre_id):
 
 @app.route("/scars")
 def view_scars():
-    """Display recorded scars with access control."""
-    viewer_name = request.args.get("viewer", "Unknown")
-    roles_param = request.args.get("roles", "")
-    member_roles = [r.strip() for r in roles_param.split(",") if r.strip()]
-    has_access, show_reporter = check_access_and_report_visibility(member_roles)
+    """Display recorded scars with access control via JWT."""
+    token = request.args.get("token")
+    if not token:
+        return "<h3>토큰이 없습니다.</h3>"
+
+    try:
+        data = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        viewer_name = data.get("viewer", "Unknown")
+        member_roles = data.get("roles", [])
+        has_access, show_reporter = check_access_and_report_visibility(member_roles)
+    except jwt.ExpiredSignatureError:
+        return "<h3>토큰이 만료되었습니다.</h3>"
+    except jwt.InvalidTokenError:
+        return "<h3>유효하지 않은 접근입니다.</h3>"
+
     if not has_access:
         return "<h3>열람 권한이 없습니다.</h3>"
 
