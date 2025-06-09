@@ -146,8 +146,7 @@ def create_signed_link(member: discord.Member) -> str | None:
     if not url:
         return None
     payload = {
-        "viewer": member.display_name,
-        "roles": [r.name for r in member.roles],
+        "uid": str(member.id),
         "exp": int(time.time()) + 300,
     }
     token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
@@ -236,6 +235,25 @@ async def add_note(request: Request):
         data["added_by_name"],
     )
     return {"success": True}
+
+
+@app.get("/member_info/{user_id}")
+async def member_info(user_id: int):
+    """Return display name and role list for a Discord member."""
+    if bot.guild is None:
+        return {"success": False, "reason": "Bot not ready"}
+    member = bot.guild.get_member(user_id)
+    if member is None:
+        try:
+            member = await bot.fetch_member(user_id)
+        except Exception:
+            return {"success": False, "reason": "not_found"}
+
+    return {
+        "success": True,
+        "display_name": member.display_name,
+        "roles": [r.name for r in member.roles],
+    }
 
 # ---------- Discord Bot ----------
 class TrackingBot(discord.Client):

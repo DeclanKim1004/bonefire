@@ -553,8 +553,15 @@ def view_scars():
 
     try:
         data = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        viewer_name = data.get("viewer", "Unknown")
-        member_roles = data.get("roles", [])
+        user_id = data.get("uid")
+        if not user_id:
+            return "<h3>유효하지 않은 토큰입니다.</h3>"
+        res = requests.get(f"{BOT_API_URL}/member_info/{user_id}")
+        info = res.json()
+        if not info.get("success"):
+            return "<h3>멤버 정보를 불러올 수 없습니다.</h3>"
+        viewer_name = info.get("display_name", "Unknown")
+        member_roles = info.get("roles", [])
         has_access, show_reporter = check_access_and_report_visibility(member_roles)
     except jwt.ExpiredSignatureError:
         return "<h3>토큰이 만료되었습니다.</h3>"
