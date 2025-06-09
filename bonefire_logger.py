@@ -152,14 +152,28 @@ def create_signed_link(member: discord.Member) -> str | None:
     token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
     return f"{url}/scars?token={token}"
 
-def add_scar_note(target_user_id: str, target_username: str, content: str, added_by_id: str, added_by_name: str):
+def add_scar_note(
+    target_user_id: str,
+    target_username: str,
+    target_nickname: str | None,
+    content: str,
+    added_by_id: str,
+    added_by_name: str,
+):
     """Insert a scar note about a user into the database."""
     query_db(
         """
-        INSERT INTO scar_notes (target_user_id, target_username, added_by_id, added_by_name, content)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO scar_notes (target_user_id, target_username, target_nickname, added_by_id, added_by_name, content)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """,
-        (target_user_id, target_username, added_by_id, added_by_name, content),
+        (
+            target_user_id,
+            target_username,
+            target_nickname,
+            added_by_id,
+            added_by_name,
+            content,
+        ),
     )
 
 # ---------- FastAPI ----------
@@ -221,6 +235,7 @@ async def add_note(request: Request):
     required = [
         "target_user_id",
         "target_username",
+        "target_nickname",
         "content",
         "added_by_id",
         "added_by_name",
@@ -230,6 +245,7 @@ async def add_note(request: Request):
     add_scar_note(
         data["target_user_id"],
         data["target_username"],
+        data.get("target_nickname"),
         data["content"],
         data["added_by_id"],
         data["added_by_name"],
@@ -333,6 +349,7 @@ class TrackingBot(discord.Client):
             add_scar_note(
                 str(target_user.id),
                 target_user.name,
+                target_user.nick,
                 note,
                 str(member.id),
                 member.name,

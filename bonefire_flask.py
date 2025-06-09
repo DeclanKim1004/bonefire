@@ -577,7 +577,7 @@ def view_scars():
         with db.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT target_username, content, added_by_name
+                SELECT target_username, target_nickname, content, added_by_name
                 FROM scar_notes
                 ORDER BY id DESC
                 """
@@ -586,8 +586,9 @@ def view_scars():
                 notes.append(
                     {
                         "target_name": row[0],
-                        "description": row[1],
-                        "added_by_name": row[2],
+                        "target_nick": row[1],
+                        "description": row[2],
+                        "added_by_name": row[3],
                     }
                 )
     finally:

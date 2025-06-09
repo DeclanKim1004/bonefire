@@ -53,7 +53,13 @@
     </tr>
     {% for note in notes %}
     <tr>
-      <td>{{ note.target_name }}</td>
+      <td>
+        {% if note.target_nick %}
+          {{ note.target_name }} ({{ note.target_nick }})
+        {% else %}
+          {{ note.target_name }}
+        {% endif %}
+      </td>
       <td>{{ note.description }}</td>
       {% if show_reporter %}
         <td>{{ note.added_by_name }}</td>
