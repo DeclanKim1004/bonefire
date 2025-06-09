@@ -6,7 +6,7 @@
   <title>🔥 화톳불 - 특이사항 열람</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='scars.css') }}">
   {% set viewer_watermark = viewer_name %}
-  {% set watermark_svg = "<svg xmlns='http://www.w3.org/2000/svg' width='260' height='160'><text x='0' y='120' font-size='20' fill='rgb(255,255,255)' font-family='Arial, sans-serif' opacity='0.15'>" ~ viewer_watermark ~ "</text></svg>" %}
+  {% set watermark_svg = "<svg xmlns='http://www.w3.org/2000/svg' width='260' height='160'><text x='0' y='120' font-size='20' fill='rgb(255,255,255)' font-family='Arial, sans-serif'>" ~ viewer_watermark ~ "</text></svg>" %}
   <style>
     body::before {
       content: "";
@@ -21,7 +21,15 @@
       background-image: url("data:image/svg+xml;utf8,{{ watermark_svg | urlencode }}");
       background-repeat: repeat;
       background-size: 260px 160px;
-      opacity: 0.15;
+      background-position: 0 0;
+      opacity: 1.0;
+    }
+
+    @media (max-width: 600px) {
+      body::before {
+        background-size: 140px 90px;
+      }
+
     }
   </style>
 </head>
