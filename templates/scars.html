@@ -3,81 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>특이사항 열람</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>🔥 화톳불 - 특이사항 열람</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='scars.css') }}">
+  {% set viewer_watermark = viewer_name %}
+  {% set watermark_svg = "<svg xmlns='http://www.w3.org/2000/svg' width='260' height='160'><text x='0' y='120' font-size='20' fill='rgb(255,255,255)' font-family='Arial, sans-serif' opacity='0.15'>" ~ viewer_watermark ~ "</text></svg>" %}
   <style>
-    {% set viewer_watermark = '조회자: ' ~ viewer_name %}
-    {% set watermark_svg = "<svg xmlns='http://www.w3.org/2000/svg' width='260' height='160'><text x='0' y='120' font-size='20' fill='rgba(100,100,100,0.15)' font-family='Arial, sans-serif'>" ~ viewer_watermark ~ "</text></svg>" %}
     .watermark {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1000;
-      transform: rotate(-30deg);
       background-image: url("data:image/svg+xml;utf8,{{ watermark_svg | urlencode }}");
-      background-repeat: repeat;
-      background-size: 260px 160px;
-      color: rgba(100, 100, 100, 0.15);
-      font-size: 5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      pointer-events: none;
-      z-index: 1000;
-      transform: rotate(-30deg);
-      white-space: pre-wrap;
-      text-align: center;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-
-  @media (max-width: 600px) {
-    .watermark {
-      font-size: 2.5rem;
-      background-size: 160px 100px;
-    }
-
-    table {
-      font-size: 0.9rem;
-    }
-  }
   </style>
 </head>
 <body>
-  <div class="watermark">조회자: {{ viewer_name }}</div>
-  <h2>특이사항 목록</h2>
-  <table>
-    <tr>
-      <th>대상</th>
-      <th>내용</th>
-      {% if show_reporter %}
-        <th>제보자</th>
-      {% endif %}
-    </tr>
+  <div class="watermark"></div>
+  <header>
+    <h1>🔥 화톳불 - 특이사항 열람</h1>
+    <div class="viewer">{{ viewer_name }}</div>
+    <div class="time" id="now"></div>
+  </header>
+
+  <div style="margin-bottom:1rem;">
+    <input type="text" id="filterInput" placeholder="대상자 검색" style="width:200px;">
+  </div>
+  <div class="note-list" id="noteList">
     {% for note in notes %}
-    <tr>
-      <td>
+    <div class="note-card" data-target="{{ note.target_name }}" {% if show_reporter %}data-reporter="{{ note.added_by_name }}"{% endif %}>
+      <div class="target-name">
         {% if note.target_nick %}
           {{ note.target_name }} ({{ note.target_nick }})
         {% else %}
           {{ note.target_name }}
         {% endif %}
-      </td>
-      <td>{{ note.description }}</td>
+      </div>
+      <div class="description">{{ note.description }}</div>
       {% if show_reporter %}
-        <td>{{ note.added_by_name }}</td>
+      <div class="reporter">작성자: {{ note.added_by_name }}</div>
       {% endif %}
-    </tr>
+    </div>
     {% endfor %}
-  </table>
+  </div>
+
+  <script>
+  const filterInput = document.getElementById('filterInput');
+  const noteList = document.getElementById('noteList');
+  filterInput.addEventListener('input', () => {
+    const val = filterInput.value.toLowerCase();
+    noteList.querySelectorAll('.note-card').forEach(card => {
+      const target = card.dataset.target.toLowerCase();
+      if(target.includes(val)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  const checkDevtools = setInterval(() => {
+    const start = performance.now();
+    debugger;
+    if (performance.now() - start > 50) {
+      alert('디버깅이 감지되었습니다.');
+      clearInterval(checkDevtools);
+    }
+  }, 1000);
+
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('now').textContent = now.toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'});
+  }
+  updateTime();
+  setInterval(updateTime, 1000);
+
+  const exp = {{ token_exp }} * 1000;
+  const ms = exp - Date.now();
+  if (ms > 0) {
+    setTimeout(() => document.body.classList.add('expired'), ms);
+  } else {
+    document.body.classList.add('expired');
+  }
+  </script>
 </body>
 </html>
