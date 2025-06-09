@@ -8,6 +8,7 @@ from collections import defaultdict
 import math
 import statistics
 import os
+from typing import List, Tuple
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
 with open(CONFIG_PATH, "r", encoding="utf-8") as f:
@@ -30,6 +31,29 @@ def get_db_connection():
         charset="utf8mb4",
         autocommit=True,
     )
+
+
+def check_access_and_report_visibility(member_roles: List[str]) -> Tuple[bool, bool]:
+    """Determine access rights and reporter visibility based on roles."""
+    is_hastati = "하스타티" in member_roles
+    is_legatus = any("레가투스" in r for r in member_roles)
+    is_special_admin = any(
+        r in member_roles
+        for r in [
+            "☽☆꧁༒🌞 태양신 🌞༒꧂☆☾",
+            "۞☆꧁༒☬ 세계수 ☬༒꧂☆۞",
+            "[뉴비관리팀장]",
+            "✧˖*°.*.｡✯마구스 팀장✯.*.✧˖*°",
+        ]
+    )
+
+    if is_special_admin:
+        return True, True
+    if is_hastati and is_legatus:
+        return True, True
+    if is_hastati:
+        return True, False
+    return False, False
 
 
 @app.route("/embers")
@@ -513,6 +537,46 @@ def kindle_delete_pyre(pyre_id):
     finally:
         db.close()
     return redirect(url_for("kindle_page"))
+
+
+@app.route("/scars")
+def view_scars():
+    """Display recorded scars with access control."""
+    viewer_name = request.args.get("viewer", "Unknown")
+    roles_param = request.args.get("roles", "")
+    member_roles = [r.strip() for r in roles_param.split(",") if r.strip()]
+    has_access, show_reporter = check_access_and_report_visibility(member_roles)
+    if not has_access:
+        return "<h3>열람 권한이 없습니다.</h3>"
+
+    db = get_db_connection()
+    notes = []
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT target_username, content, added_by_name
+                FROM scar_notes
+                ORDER BY id DESC
+                """
+            )
+            for row in cursor.fetchall():
+                notes.append(
+                    {
+                        "target_name": row[0],
+                        "description": row[1],
+                        "added_by_name": row[2],
+                    }
+                )
+    finally:
+        db.close()
+
+    return render_template(
+        "scars.html",
+        notes=notes,
+        viewer_name=viewer_name,
+        show_reporter=show_reporter,
+    )
 
 
 if __name__ == "__main__":

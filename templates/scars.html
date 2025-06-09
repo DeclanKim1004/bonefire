@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>특이사항 열람</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(100, 100, 100, 0.3);
+      font-size: 14px;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="watermark">조회자: {{ viewer_name }}</div>
+  <h2>특이사항 목록</h2>
+  <table>
+    <tr>
+      <th>대상</th>
+      <th>내용</th>
+      {% if show_reporter %}
+        <th>제보자</th>
+      {% endif %}
+    </tr>
+    {% for note in notes %}
+    <tr>
+      <td>{{ note.target_name }}</td>
+      <td>{{ note.description }}</td>
+      {% if show_reporter %}
+        <td>{{ note.added_by_name }}</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

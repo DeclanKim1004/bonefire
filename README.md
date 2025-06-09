@@ -24,3 +24,19 @@ python3 -m pip install --upgrade -r requirements.txt
 
 Create a `config.json` file in the project root after cloning. This configuration is loaded by both the Flask dashboard and the Discord logger. An example path would be `/opt/bonefire/config.json` when running the service.
 
+## Scars viewer
+
+The `/scars` endpoint in `bonefire_flask.py` displays user reports collected via the `/scar_the_ember` bot command. Access is granted according to Discord roles and the viewer name is shown as a watermark on the page.
+
+### scar_notes table
+
+Reports are stored in a table named `scar_notes` with the following columns:
+
+| column           | description                   |
+|------------------|-------------------------------|
+| `id`             | primary key                   |
+| `target_username`| user the note refers to       |
+| `content`        | text of the note              |
+| `added_by_name`  | reporter display name         |
+| `created_at`     | timestamp when note was added |
+
