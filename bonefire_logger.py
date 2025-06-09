@@ -9,6 +9,8 @@ from threading import Thread
 from discord.utils import get
 from discord import app_commands
 from datetime import datetime, timezone, timedelta
+import time
+import jwt
 import logging
 import queue
 import threading
@@ -33,6 +35,7 @@ GUILD_ID = config.get("guild_id")
 DM_TARGET_ID = 358637116290367491
 HASTATI_ROLE_NAME = "━━♔⊱༻ 하스타티 ༺⊰♔━━"
 LEGATUS_ROLE_NAME = "✧˖*°࿐.*.｡ ⚔️레가투스⚔️.*.✧˖*°࿐"
+JWT_SECRET = config.get("jwt_secret", "change_me")
 
 # ---------- Connection Pool ----------
 class SimpleConnectionPool:
@@ -86,6 +89,18 @@ def is_hastati(roles: list[str]) -> bool:
 def is_legatus(roles: list[str]) -> bool:
     return LEGATUS_ROLE_NAME in roles
 
+def has_scar_access(roles: list[str]) -> bool:
+    return any(
+        r in roles
+        for r in [
+            HASTATI_ROLE_NAME,
+            "☽☆꧁༒🌞 태양신 🌞༒꧂☆☾",
+            "۞☆꧁༒☬ 세계수 ☬༒꧂☆۞",
+            "[뉴비관리팀장]",
+            "✧˖*°.*.｡✯마구스 팀장✯.*.✧˖*°",
+        ]
+    )
+
 def is_tracked_user(user_id):
     result = query_db("SELECT 1 FROM tracked_users WHERE user_id = %s", (user_id,), fetch=True)
     return bool(result)
@@ -124,6 +139,19 @@ def get_current_url():
             return f.read().strip()
     except FileNotFoundError:
         return None
+
+def create_signed_link(member: discord.Member) -> str | None:
+    """Return a signed /scars link for the given member."""
+    url = get_current_url()
+    if not url:
+        return None
+    payload = {
+        "viewer": member.display_name,
+        "roles": [r.name for r in member.roles],
+        "exp": int(time.time()) + 300,
+    }
+    token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+    return f"{url}/scars?token={token}"
 
 def add_user_note(target_user_id: str, target_username: str, content: str, added_by_id: str, added_by_name: str):
     """Insert a note about a user into the database."""
@@ -293,8 +321,28 @@ class TrackingBot(discord.Client):
             )
             await interaction.followup.send("✅ 특이사항이 기록되었습니다.", ephemeral=True)
 
+        @app_commands.command(name="scars", description="특이사항 목록 링크를 받습니다")
+        @app_commands.guild_only()
+        async def scars_command(interaction: discord.Interaction):
+            member = interaction.guild.get_member(interaction.user.id)
+            role_names = [r.name for r in member.roles]
+            if not has_scar_access(role_names):
+                await interaction.response.send_message(
+                    "❌ 열람 권한이 없습니다.", ephemeral=True
+                )
+                return
+            link = create_signed_link(member)
+            if not link:
+                await interaction.response.send_message(
+                    "❗ ngrok 링크를 찾을 수 없습니다.",
+                    ephemeral=True,
+                )
+                return
+            await interaction.response.send_message(link, ephemeral=True)
+
         self.tree.add_command(bonefire_command, guild=discord.Object(id=GUILD_ID))
         self.tree.add_command(scar_the_ember, guild=discord.Object(id=GUILD_ID))
+        self.tree.add_command(scars_command, guild=discord.Object(id=GUILD_ID))
         await self.tree.sync(guild=discord.Object(id=GUILD_ID))
 
     async def on_ready(self):

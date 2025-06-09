@@ -6,3 +6,4 @@ PyMySQL
 discord.py
 nest_asyncio
 pyngrok
+PyJWT

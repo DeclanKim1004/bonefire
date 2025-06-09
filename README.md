@@ -23,10 +23,18 @@ python3 -m pip install --upgrade -r requirements.txt
 ```
 
 Create a `config.json` file in the project root after cloning. This configuration is loaded by both the Flask dashboard and the Discord logger. An example path would be `/opt/bonefire/config.json` when running the service.
+Include a `jwt_secret` value in this file to sign temporary tokens used by the `/scars` command:
+
+```json
+{
+  "jwt_secret": "your-secret-key",
+  ...
+}
+```
 
 ## Scars viewer
 
-The `/scars` endpoint in `bonefire_flask.py` displays user reports collected via the `/scar_the_ember` bot command. Access is granted according to Discord roles and the viewer name is shown as a watermark on the page.
+The `/scars` endpoint in `bonefire_flask.py` displays user reports collected via the `/scar_the_ember` bot command. Access is granted according to Discord roles and the viewer name is shown as a watermark on the page. Use the `/scars` slash command in Discord to receive a temporary link containing a signed token for authentication.
 
 ### scar_notes table
 
