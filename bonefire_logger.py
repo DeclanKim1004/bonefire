@@ -78,6 +78,9 @@ def get_highest_role(member):
     roles = [r for r in member.roles if r.name != "@everyone"]
     return max(roles, key=lambda r: r.position).name if roles else None
 
+def is_hastati(roles: list[str]) -> bool:
+    return "하스타티" in roles
+
 def is_tracked_user(user_id):
     result = query_db("SELECT 1 FROM tracked_users WHERE user_id = %s", (user_id,), fetch=True)
     return bool(result)
@@ -116,6 +119,16 @@ def get_current_url():
             return f.read().strip()
     except FileNotFoundError:
         return None
+
+def add_user_note(target_user_id: str, target_username: str, content: str, added_by_id: str, added_by_name: str):
+    """Insert a note about a user into the database."""
+    query_db(
+        """
+        INSERT INTO user_notes (target_user_id, target_username, added_by_id, added_by_name, content)
+        VALUES (%s, %s, %s, %s, %s)
+        """,
+        (target_user_id, target_username, added_by_id, added_by_name, content),
+    )
 
 # ---------- FastAPI ----------
 app = FastAPI()
@@ -169,6 +182,28 @@ async def verify_channel(request: Request):
 
     return {"success": True, "channel_id": channel.id}
 
+
+@app.post("/notes")
+async def add_note(request: Request):
+    data = await request.json()
+    required = [
+        "target_user_id",
+        "target_username",
+        "content",
+        "added_by_id",
+        "added_by_name",
+    ]
+    if not all(key in data for key in required):
+        return {"success": False, "reason": "missing_field"}
+    add_user_note(
+        data["target_user_id"],
+        data["target_username"],
+        data["content"],
+        data["added_by_id"],
+        data["added_by_name"],
+    )
+    return {"success": True}
+
 # ---------- Discord Bot ----------
 class TrackingBot(discord.Client):
     def __init__(self):
@@ -212,7 +247,48 @@ class TrackingBot(discord.Client):
                     "❗ ngrok 링크를 찾을 수 없습니다.", ephemeral=True
                 )
 
+        @app_commands.command(name="scar_the_ember", description="대상 유저에게 특이사항을 새깁니다")
+        @app_commands.describe(target_user="기록 대상", note="내용")
+        @app_commands.guild_only()
+        async def scar_the_ember(
+            interaction: discord.Interaction,
+            target_user: discord.Member,
+            note: str,
+        ):
+            member = interaction.guild.get_member(interaction.user.id)
+            role_names = [r.name for r in member.roles]
+            if not is_hastati(role_names):
+                await interaction.response.send_message(
+                    "이 서약은 하스타티에게만 허락되어 있습니다.", ephemeral=True
+                )
+                timestamp = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+                dm_content = (
+                    "🚫 /scar_the_ember 명령 실패 시도 감지\n\n"
+                    f"🧑 사용자: {member.name} (ID: {member.id})\n"
+                    f"📝 입력: /scar_the_ember @{target_user.display_name} {note}\n"
+                    f"🕒 시각: {timestamp} (KST)\n"
+                    "📛 사유: 하스타티 역할이 아님"
+                )
+                target = self.get_user(DM_TARGET_ID) or await self.fetch_user(DM_TARGET_ID)
+                if target:
+                    try:
+                        await target.send(dm_content)
+                    except Exception as e:
+                        logger.error(f"/scar_the_ember DM 전송 실패: {e}")
+                return
+
+            await interaction.response.defer(ephemeral=True)
+            add_user_note(
+                str(target_user.id),
+                target_user.name,
+                note,
+                str(member.id),
+                member.name,
+            )
+            await interaction.followup.send("✅ 특이사항이 기록되었습니다.", ephemeral=True)
+
         self.tree.add_command(bonefire_command, guild=discord.Object(id=GUILD_ID))
+        self.tree.add_command(scar_the_ember, guild=discord.Object(id=GUILD_ID))
         await self.tree.sync(guild=discord.Object(id=GUILD_ID))
 
     async def on_ready(self):
