@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>특이사항 열람</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
@@ -34,10 +35,21 @@
       width: 100%;
       border-collapse: collapse;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .watermark {
+      font-size: 2.5rem;
+      background-size: 160px 100px;
     }
+
+    table {
+      font-size: 0.9rem;
+    }
+  }
   </style>
 </head>
 <body>
