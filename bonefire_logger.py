@@ -31,6 +31,8 @@ DISCORD_TOKEN = config["token"]
 DB_CONFIG = config.get("database")
 GUILD_ID = config.get("guild_id")
 DM_TARGET_ID = 358637116290367491
+HASTATI_ROLE_NAME = "━━♔⊱༻ 하스타티 ༺⊰♔━━"
+LEGATUS_ROLE_NAME = "✧˖*°࿐.*.｡ ⚔️레가투스⚔️.*.✧˖*°࿐"
 
 # ---------- Connection Pool ----------
 class SimpleConnectionPool:
@@ -79,7 +81,10 @@ def get_highest_role(member):
     return max(roles, key=lambda r: r.position).name if roles else None
 
 def is_hastati(roles: list[str]) -> bool:
-    return "하스타티" in roles
+    return HASTATI_ROLE_NAME in roles
+
+def is_legatus(roles: list[str]) -> bool:
+    return LEGATUS_ROLE_NAME in roles
 
 def is_tracked_user(user_id):
     result = query_db("SELECT 1 FROM tracked_users WHERE user_id = %s", (user_id,), fetch=True)
@@ -222,7 +227,7 @@ class TrackingBot(discord.Client):
             member = interaction.guild.get_member(interaction.user.id)
             if not member or not any(
                 r.name in [
-                    "✧˖*°࿐.*.｡ ⚔️레가투스⚔️.*.✧˖*°࿐",
+                    LEGATUS_ROLE_NAME,
                     "☽☆꧁༒🌞 태양신 🌞༒꧂☆☾",
                     "۞☆꧁༒☬ 세계수 ☬༒꧂☆۞",
                     "[뉴비관리팀장]",
@@ -231,7 +236,7 @@ class TrackingBot(discord.Client):
                 for r in member.roles
             ):
                 await interaction.response.send_message(
-                    "❌ 레가투스 이상만 가능합니다.", ephemeral=True
+                    f"❌ {LEGATUS_ROLE_NAME} 이상만 가능합니다.", ephemeral=True
                 )
                 return
 
@@ -259,7 +264,8 @@ class TrackingBot(discord.Client):
             role_names = [r.name for r in member.roles]
             if not is_hastati(role_names):
                 await interaction.response.send_message(
-                    "이 서약은 하스타티에게만 허락되어 있습니다.", ephemeral=True
+                    f"이 서약은 {HASTATI_ROLE_NAME}에게만 허락되어 있습니다.",
+                    ephemeral=True,
                 )
                 timestamp = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
                 dm_content = (
@@ -267,7 +273,7 @@ class TrackingBot(discord.Client):
                     f"🧑 사용자: {member.name} (ID: {member.id})\n"
                     f"📝 입력: /scar_the_ember @{target_user.display_name} {note}\n"
                     f"🕒 시각: {timestamp} (KST)\n"
-                    "📛 사유: 하스타티 역할이 아님"
+                    f"📛 사유: {HASTATI_ROLE_NAME} 역할이 아님"
                 )
                 target = self.get_user(DM_TARGET_ID) or await self.fetch_user(DM_TARGET_ID)
                 if target:

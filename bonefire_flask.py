@@ -20,6 +20,9 @@ BOT_API_URL = "http://localhost:8000"  # 봇 FastAPI 서버 주소
 app = Flask(__name__)
 app.secret_key = "13252134"  # flash 메시지용
 
+HASTATI_ROLE_NAME = "━━♔⊱༻ 하스타티 ༺⊰♔━━"
+LEGATUS_ROLE_NAME = "✧˖*°࿐.*.｡ ⚔️레가투스⚔️.*.✧˖*°࿐"
+
 
 def get_db_connection():
     return pymysql.connect(
@@ -35,8 +38,8 @@ def get_db_connection():
 
 def check_access_and_report_visibility(member_roles: List[str]) -> Tuple[bool, bool]:
     """Determine access rights and reporter visibility based on roles."""
-    is_hastati = "하스타티" in member_roles
-    is_legatus = any("레가투스" in r for r in member_roles)
+    is_hastati = HASTATI_ROLE_NAME in member_roles
+    is_legatus = LEGATUS_ROLE_NAME in member_roles
     is_special_admin = any(
         r in member_roles
         for r in [
