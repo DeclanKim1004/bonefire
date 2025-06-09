@@ -554,6 +554,7 @@ def view_scars():
     try:
         data = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         user_id = data.get("uid")
+        token_exp = data.get("exp")
         if not user_id:
             return "<h3>유효하지 않은 토큰입니다.</h3>"
         res = requests.get(f"{BOT_API_URL}/member_info/{user_id}")
@@ -599,6 +600,7 @@ def view_scars():
         notes=notes,
         viewer_name=viewer_name,
         show_reporter=show_reporter,
+        token_exp=token_exp,
     )
 
 
