@@ -152,11 +152,11 @@ def create_signed_link(member: discord.Member) -> str | None:
     token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
     return f"{url}/scars?token={token}"
 
-def add_user_note(target_user_id: str, target_username: str, content: str, added_by_id: str, added_by_name: str):
-    """Insert a note about a user into the database."""
+def add_scar_note(target_user_id: str, target_username: str, content: str, added_by_id: str, added_by_name: str):
+    """Insert a scar note about a user into the database."""
     query_db(
         """
-        INSERT INTO user_notes (target_user_id, target_username, added_by_id, added_by_name, content)
+        INSERT INTO scar_notes (target_user_id, target_username, added_by_id, added_by_name, content)
         VALUES (%s, %s, %s, %s, %s)
         """,
         (target_user_id, target_username, added_by_id, added_by_name, content),
@@ -227,7 +227,7 @@ async def add_note(request: Request):
     ]
     if not all(key in data for key in required):
         return {"success": False, "reason": "missing_field"}
-    add_user_note(
+    add_scar_note(
         data["target_user_id"],
         data["target_username"],
         data["content"],
@@ -330,7 +330,7 @@ class TrackingBot(discord.Client):
                 return
 
             await interaction.response.defer(ephemeral=True)
-            add_user_note(
+            add_scar_note(
                 str(target_user.id),
                 target_user.name,
                 note,
