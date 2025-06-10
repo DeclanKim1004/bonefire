@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 import pymysql
 import json
 import asyncio
@@ -375,9 +376,40 @@ class TrackingBot(discord.Client):
                 return
             await interaction.response.send_message(link, ephemeral=True)
 
+        @app_commands.command(name="들여다보기", description="오늘 남겨진 잿불의 흔적을 엿봅니다.")
+        @commands.has_role(HASTATI_ROLE_NAME)
+        async def glance_the_embers(interaction: discord.Interaction):
+            if interaction.channel.name != "💠하스타티-뉴관팀":
+                await interaction.response.send_message(
+                    "❌ 이 명령은 지정된 장소에서만 사용할 수 있습니다.", ephemeral=True
+                )
+                return
+
+            records = query_db(
+                "SELECT content FROM scar_notes ORDER BY created_at DESC LIMIT 4",
+                fetch=True,
+            )
+
+            if not records:
+                await interaction.response.send_message(
+                    "🕯️ 아직 남겨진 잔흔이 없습니다.", ephemeral=True
+                )
+                return
+
+            summary_lines = "\n".join(
+                f"🕯️ “{r[0][:20].strip()}…”" for r in records
+            )
+            msg = (
+                "🔥 오늘, 잿불 곁에 남겨진 잔흔은…\n\n"
+                f"{summary_lines}\n\n"
+                "📜 …그 흔적을 넘겨보려면, /scars 명령어를 읊으시오."
+            )
+            await interaction.response.send_message(msg)
+
         self.tree.add_command(bonefire_command, guild=discord.Object(id=GUILD_ID))
         self.tree.add_command(scar_the_ember, guild=discord.Object(id=GUILD_ID))
         self.tree.add_command(scars_command, guild=discord.Object(id=GUILD_ID))
+        self.tree.add_command(glance_the_embers, guild=discord.Object(id=GUILD_ID))
         await self.tree.sync(guild=discord.Object(id=GUILD_ID))
 
     async def on_ready(self):
