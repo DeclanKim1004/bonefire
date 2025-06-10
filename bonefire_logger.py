@@ -404,7 +404,15 @@ class TrackingBot(discord.Client):
                 f"{summary_lines}\n\n"
                 "📜 …그 흔적을 넘겨보려면, /scars 명령어를 읊으시오."
             )
-            await interaction.response.send_message(msg)
+            await interaction.response.defer()
+            sent_msg = await interaction.followup.send(msg)
+
+            # ⏳ 60초 후 메시지 삭제
+            await asyncio.sleep(60)
+            try:
+                await sent_msg.delete()
+            except Exception as e:
+                logger.error(f"메시지 삭제 실패: {e}")
 
         self.tree.add_command(bonefire_command, guild=discord.Object(id=GUILD_ID))
         self.tree.add_command(scar_the_ember, guild=discord.Object(id=GUILD_ID))
